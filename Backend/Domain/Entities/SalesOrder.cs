@@ -12,6 +12,6 @@ public class SalesOrder
     public decimal TotalTax { get; set; }
     public decimal TotalIncl { get; set; }
 
-    public Client Client { get; set; }
-    public ICollection<SalesOrderItem> Items { get; set; }
+    public Client? Client { get; set; }
+    public ICollection<SalesOrderItem> Items { get; set; } = new List<SalesOrderItem>();
 }

@@ -11,5 +11,5 @@ public class SalesOrderDto
     public decimal TotalTax { get; set; }
     public decimal TotalIncl { get; set; }
 
-    public List<SalesOrderItemDto> Items { get; set; }
+    public List<SalesOrderItemDto>? Items { get; set; }
 }
