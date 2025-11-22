@@ -5,17 +5,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Infrastructure.Repositories;
 
-public class ItemRepository : IItemRepository
+public class ClientRepository : IClientRepository
 {
     private readonly AppDbContext _context;
 
-    public ItemRepository(AppDbContext context)
+    public ClientRepository(AppDbContext context)
     {
         _context = context;
     }
 
-    public async Task<IEnumerable<Item>> GetAllAsync()
+    public async Task<IEnumerable<Client>> GetAllAsync()
     {
-        return await _context.Items.ToListAsync();
+        return await _context.Clients.ToListAsync();
     }
 }
