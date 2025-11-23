@@ -46,6 +46,7 @@ public class SalesOrderService : ISalesOrderService
 
         return new SalesOrderDto
         {
+            Id = order.Id,
             ClientId = order.ClientId,
             InvoiceDate = order.InvoiceDate,
             InvoiceNumber = order.InvoiceNumber,
@@ -69,6 +70,7 @@ public class SalesOrderService : ISalesOrderService
 
         return list.Select(order => new SalesOrderDto
         {
+            Id = order.Id,
             ClientId = order.ClientId,
             InvoiceDate = order.InvoiceDate,
             InvoiceNumber = order.InvoiceNumber,
