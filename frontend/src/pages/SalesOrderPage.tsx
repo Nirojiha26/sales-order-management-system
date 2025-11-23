@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 
 import {
   setCustomer,
@@ -21,31 +22,24 @@ import type { RootState, AppDispatch } from "../redux/store";
 
 const SalesOrderPage = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
-  // Redux state
   const { clients } = useSelector((state: RootState) => state.clients);
   const { items } = useSelector((state: RootState) => state.items);
-const salesOrder = useSelector((state: RootState) => state.salesOrder);
-  // Temporary UI state for item input form
+  const salesOrder = useSelector((state: RootState) => state.salesOrder);
+
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
   const [qty, setQty] = useState<number>(1);
   const [taxRate, setTaxRate] = useState<number>(15);
 
-  // Fetch clients + items when screen loads
   useEffect(() => {
     dispatch(fetchClients());
     dispatch(fetchItems());
   }, [dispatch]);
 
-  // Derived selected customer
-  const selectedCustomer = clients.find(
-    (c) => c.id === salesOrder.customerId
-  );
-
-  // Derived selected item
+  const selectedCustomer = clients.find((c) => c.id === salesOrder.customerId);
   const selectedItem = items.find((i) => i.id === selectedItemId);
 
-  // Add item handler
   const handleAddItem = () => {
     if (!selectedItem) return;
 
@@ -68,15 +62,12 @@ const salesOrder = useSelector((state: RootState) => state.salesOrder);
       })
     );
 
-    // reset fields
     setSelectedItemId(null);
     setQty(1);
     setTaxRate(15);
   };
 
-  // Save order handler
   const handleSaveOrder = async () => {
-    // Basic validation to avoid 400 from backend
     if (!salesOrder.customerId) {
       alert("Please select a customer");
       return;
@@ -109,17 +100,29 @@ const salesOrder = useSelector((state: RootState) => state.salesOrder);
     try {
       await salesOrderService.createSalesOrder(orderPayload);
       alert("Sales order saved!");
+      navigate("/"); // Redirect to Home Page after saving
     } catch (err: any) {
-      const msg = err?.response?.data ? JSON.stringify(err.response.data) : err?.message || "Failed to save order";
+      const msg =
+        err?.response?.data
+          ? JSON.stringify(err.response.data)
+          : err?.message || "Failed to save order";
       alert(msg);
     }
   };
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-2xl font-semibold mb-6">Create Sales Order</h1>
 
-      {/* ========================== CUSTOMER DETAILS =========================== */}
+      {/* PAGE HEADER WITH BACK BUTTON */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-semibold">Create Sales Order</h1>
+
+        <Link to="/">
+          <Button variant="secondary">← Home</Button>
+        </Link>
+      </div>
+
+      {/* ================= CUSTOMER DETAILS ================= */}
       <Card>
         <h2 className="text-lg font-semibold mb-4">Customer Details</h2>
 
@@ -142,7 +145,7 @@ const salesOrder = useSelector((state: RootState) => state.salesOrder);
         </div>
       </Card>
 
-      {/* ========================== INVOICE DETAILS =========================== */}
+      {/* ================= INVOICE DETAILS ================= */}
       <Card>
         <h2 className="text-lg font-semibold mb-4">Invoice Details</h2>
 
@@ -174,11 +177,10 @@ const salesOrder = useSelector((state: RootState) => state.salesOrder);
         </div>
       </Card>
 
-      {/* ========================== ITEMS SECTION ============================= */}
+      {/* ================= ITEMS SECTION ================= */}
       <Card>
         <h2 className="text-lg font-semibold mb-4">Items</h2>
 
-        {/* Add item row */}
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
           <Select
             label="Item Code"
@@ -196,10 +198,7 @@ const salesOrder = useSelector((state: RootState) => state.salesOrder);
             label="Qty"
             type="number"
             value={Number.isFinite(qty) ? qty : 0}
-            onChange={(e) => {
-              const v = e.target.value;
-              setQty(v === "" ? 0 : Number(v));
-            }}
+            onChange={(e) => setQty(Number(e.target.value))}
           />
 
           <Input
@@ -212,10 +211,7 @@ const salesOrder = useSelector((state: RootState) => state.salesOrder);
             label="Tax (%)"
             type="number"
             value={Number.isFinite(taxRate) ? taxRate : 0}
-            onChange={(e) => {
-              const v = e.target.value;
-              setTaxRate(v === "" ? 0 : Number(v));
-            }}
+            onChange={(e) => setTaxRate(Number(e.target.value))}
           />
 
           <Button variant="primary" onClick={handleAddItem}>
@@ -223,7 +219,6 @@ const salesOrder = useSelector((state: RootState) => state.salesOrder);
           </Button>
         </div>
 
-        {/* Items table */}
         <div className="overflow-x-auto">
           <table className="w-full text-sm border">
             <thead className="bg-gray-200">
@@ -251,10 +246,7 @@ const salesOrder = useSelector((state: RootState) => state.salesOrder);
                   <td className="p-2 border">{item.incl.toFixed(2)}</td>
 
                   <td className="p-2 border text-center">
-                    <Button
-                      variant="danger"
-                      onClick={() => dispatch(removeItem(index))}
-                    >
+                    <Button variant="danger" onClick={() => dispatch(removeItem(index))}>
                       Remove
                     </Button>
                   </td>
@@ -265,7 +257,7 @@ const salesOrder = useSelector((state: RootState) => state.salesOrder);
         </div>
       </Card>
 
-      {/* ========================== TOTALS ============================= */}
+      {/* ================= TOTALS ================= */}
       <Card>
         <h2 className="text-lg font-semibold mb-4">Summary</h2>
 
