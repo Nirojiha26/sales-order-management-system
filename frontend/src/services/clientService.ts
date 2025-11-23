@@ -1,9 +1,13 @@
 // src/services/clientService.ts
 import axios from "axios";
 
-const API_URL = "http://localhost:5167/api/clients";
+const API_URL = "http://localhost:5167/api/client";
 
-export const getClients = async () => {
-  const response = await axios.get(API_URL);
-  return response.data;
+const clientService = {
+  getAllClients: async () => {
+    const response = await axios.get(API_URL);
+    return response.data;
+  }
 };
+
+export default clientService;
