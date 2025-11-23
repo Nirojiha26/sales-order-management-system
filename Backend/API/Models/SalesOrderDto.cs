@@ -2,6 +2,7 @@ namespace Backend.API.Models;
 
 public class SalesOrderDto
 {
+    public int Id { get; set; }
     public int ClientId { get; set; }
     public DateTime InvoiceDate { get; set; }
     public string? InvoiceNumber { get; set; }
