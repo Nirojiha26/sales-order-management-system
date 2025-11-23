@@ -56,6 +56,7 @@ const PrintInvoicePage = () => {
         padding: "40px",
         color: "black",
       }}
+      className="print-container"
     >
       {/* PRINT FIX */}
       <style>
@@ -64,6 +65,21 @@ const PrintInvoicePage = () => {
             body {
               background: white !important;
             }
+            /* Ensure full-width printable area and tighter spacing */
+            .print-container {
+              width: 100% !important;
+              margin: 0 !important;
+              padding: 0 !important;
+            }
+            /* Hide all controls */
+            .no-print { display: none !important; }
+            /* Improve table borders for print */
+            table { border-collapse: collapse !important; }
+            th, td { border: 1px solid #000 !important; }
+          }
+          @page {
+            size: A4;
+            margin: 12mm;
           }
         `}
       </style>
@@ -125,7 +141,7 @@ const PrintInvoicePage = () => {
       {/* PRINT BUTTON */}
       <button
         onClick={() => window.print()}
-        className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-md"
+        className="no-print mt-6 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md"
       >
         Print / Save as PDF
       </button>
