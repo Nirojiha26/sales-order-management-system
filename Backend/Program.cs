@@ -28,6 +28,19 @@ builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<ISalesOrderService, SalesOrderService>();
 
+// 🔹 Configure CORS policy for frontend dev server
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+        // If you use cookies or auth headers from the browser, also add:
+        // .AllowCredentials();
+    });
+});
+
 var app = builder.Build();
 
 // 🔹 Enable Swagger only during development
@@ -37,8 +50,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
+// In development, avoid forcing HTTPS redirection to prevent CORS issues on redirects
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+app.UseCors("AllowFrontend");
 app.UseAuthorization();
 
 app.MapControllers();
