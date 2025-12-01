@@ -1,4 +1,4 @@
-// src/redux/slices/salesOrderSlice.ts
+// Manages sales order form data (customer, invoice fields, items, totals)
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -9,17 +9,18 @@ export interface OrderItem {
   quantity: number;
   price: number;
   taxRate: number;
-  excl: number;
-  tax: number;
-  incl: number;
+  excl: number; // line total excl tax
+  tax: number;  // line tax
+  incl: number; // line total incl tax
 }
 
 interface SalesOrderState {
-  customerId: number | null;
+  customerId: number | null; // selected customer
   invoiceNo: string;
   invoiceDate: string;
   reference: string;
-  items: OrderItem[];
+
+  items: OrderItem[]; // all order items
   totals: {
     totalExcl: number;
     totalTax: number;
@@ -32,7 +33,7 @@ const initialState: SalesOrderState = {
   invoiceNo: "",
   invoiceDate: "",
   reference: "",
-  items: [],
+  items: [], // no items initially
   totals: {
     totalExcl: 0,
     totalTax: 0,
@@ -40,14 +41,17 @@ const initialState: SalesOrderState = {
   },
 };
 
+// Handles invoice UI logic (not API)
 const salesOrderSlice = createSlice({
   name: "salesOrder",
   initialState,
   reducers: {
+    // set selected customer
     setCustomer(state, action: PayloadAction<number | null>) {
       state.customerId = action.payload;
     },
 
+    // update invoice fields dynamically
     setInvoiceField(
       state,
       action: PayloadAction<{ field: string; value: string }>
@@ -55,11 +59,13 @@ const salesOrderSlice = createSlice({
       (state as any)[action.payload.field] = action.payload.value;
     },
 
+    // add new item and recalc totals
     addItem(state, action: PayloadAction<OrderItem>) {
       state.items.push(action.payload);
-      recalcTotals(state);
+      recalcTotals(state); // auto update totals
     },
 
+    // remove item by index and recalc totals
     removeItem(state, action: PayloadAction<number>) {
       state.items = state.items.filter((_, index) => index !== action.payload);
       recalcTotals(state);
@@ -67,6 +73,7 @@ const salesOrderSlice = createSlice({
   },
 });
 
+// calculates invoice totals based on added items
 function recalcTotals(state: SalesOrderState) {
   let excl = 0;
   let tax = 0;

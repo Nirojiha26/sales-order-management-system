@@ -1,4 +1,4 @@
-// src/redux/slices/itemSlice.ts
+// Manages global item list state (used in many components)
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import itemService from "../../services/itemService";
 
@@ -10,9 +10,9 @@ export interface Item {
 }
 
 interface ItemState {
-  items: Item[];
-  loading: boolean;
-  error: string | null;
+  items: Item[];        // Stores API item list
+  loading: boolean;     // Loader flag
+  error: string | null; // Error flag
 }
 
 const initialState: ItemState = {
@@ -21,33 +21,35 @@ const initialState: ItemState = {
   error: null,
 };
 
+// Async API call → GET /items
 export const fetchItems = createAsyncThunk(
   "items/fetchItems",
   async (_, thunkAPI) => {
     try {
-      return await itemService.getAllItems();
+      return await itemService.getAllItems(); // Calls service → backend
     } catch (err: any) {
-      return thunkAPI.rejectWithValue(err.message);
+      return thunkAPI.rejectWithValue(err.message); // API error handling
     }
   }
 );
 
+// Handles loading → success → error for items
 const itemSlice = createSlice({
   name: "items",
   initialState,
-  reducers: {},
+  reducers: {}, // No manual reducers
   extraReducers: (builder) => {
     builder
       .addCase(fetchItems.pending, (state) => {
-        state.loading = true;
+        state.loading = true; // API started
       })
       .addCase(fetchItems.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload;
+        state.items = action.payload; // API success → store items
       })
       .addCase(fetchItems.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload as string; // API failed
       });
   },
 });
