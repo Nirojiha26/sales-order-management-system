@@ -34,5 +34,18 @@ public class AppDbContext : DbContext
             .HasOne(i => i.Item)
             .WithMany()
             .HasForeignKey(i => i.ItemId);
+
+        // Precision for decimals
+        modelBuilder.Entity<Item>().Property(x => x.Price).HasColumnType("decimal(18,2)");
+        
+        modelBuilder.Entity<SalesOrder>().Property(x => x.TotalExcl).HasColumnType("decimal(18,2)");
+        modelBuilder.Entity<SalesOrder>().Property(x => x.TotalIncl).HasColumnType("decimal(18,2)");
+        modelBuilder.Entity<SalesOrder>().Property(x => x.TotalTax).HasColumnType("decimal(18,2)");
+
+        modelBuilder.Entity<SalesOrderItem>().Property(x => x.ExclAmount).HasColumnType("decimal(18,2)");
+        modelBuilder.Entity<SalesOrderItem>().Property(x => x.InclAmount).HasColumnType("decimal(18,2)");
+        modelBuilder.Entity<SalesOrderItem>().Property(x => x.Price).HasColumnType("decimal(18,2)");
+        modelBuilder.Entity<SalesOrderItem>().Property(x => x.TaxAmount).HasColumnType("decimal(18,2)");
+        modelBuilder.Entity<SalesOrderItem>().Property(x => x.TaxRate).HasColumnType("decimal(18,4)");
     }
 }
