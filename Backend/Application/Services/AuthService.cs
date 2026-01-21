@@ -1,3 +1,4 @@
+using Backend.Application.Models;
 using Backend.Application.Interfaces;
 using Backend.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
